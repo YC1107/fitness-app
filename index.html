@@ -1,0 +1,125 @@
+
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f7f5f1">
+<title>居家減脂｜Workout</title>
+<style>
+:root{--bg:#f7f5f1;--card:#fff;--text:#252525;--muted:#777;--accent:#7b8f72;--accent2:#dfe7d9;--line:#e8e5df;--danger:#b85b5b}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","PingFang TC",sans-serif}
+.app{max-width:520px;margin:auto;min-height:100vh;padding-bottom:90px}
+header{padding:28px 20px 12px;position:sticky;top:0;background:rgba(247,245,241,.94);backdrop-filter:blur(12px);z-index:5}
+h1{font-size:28px;margin:0 0 4px}.sub{color:var(--muted);font-size:14px}
+main{padding:8px 16px}.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;margin:12px 0;box-shadow:0 3px 15px rgba(0,0,0,.035)}
+.hero{background:linear-gradient(135deg,#edf2e8,#fff);}.hero h2{margin:0 0 8px;font-size:20px}.progress{height:10px;background:#e9e7e1;border-radius:99px;overflow:hidden}.bar{height:100%;background:var(--accent);width:0%;transition:.25s}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px}.exercise{padding:14px 0;border-bottom:1px solid var(--line)}.exercise:last-child{border-bottom:0}
+.name{font-weight:700}.target{font-size:13px;color:var(--muted);margin-top:3px}
+.sets{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}.set{min-width:45px;height:34px;border:1px solid #ddd9d1;border-radius:10px;background:#faf9f6;display:flex;align-items:center;justify-content:center;font-size:13px}.set.done{background:var(--accent2);border-color:#cbd8c3;font-weight:700}
+button{border:0;border-radius:12px;padding:11px 15px;font:inherit;font-weight:700;background:var(--accent);color:white;cursor:pointer}button.secondary{background:#efede8;color:var(--text)}button.small{padding:8px 10px;font-size:13px}.full{width:100%;margin-top:10px}
+.bottom{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.96);border-top:1px solid var(--line);padding:9px max(16px,calc((100vw - 520px)/2 + 16px));display:flex;justify-content:space-around;z-index:10}.nav{background:none;color:#777;padding:7px 15px}.nav.active{color:var(--accent)}
+.hidden{display:none}.empty{text-align:center;color:var(--muted);padding:35px 10px}
+input,select{font:inherit;padding:11px;border:1px solid var(--line);border-radius:12px;width:100%;background:#fff}.field{margin:10px 0}.label{font-size:13px;color:var(--muted);margin-bottom:5px;display:block}
+.timer{font-size:44px;font-weight:800;text-align:center;margin:12px}.badge{font-size:12px;background:#eef1ec;padding:5px 8px;border-radius:99px;color:#53614d}
+
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:24px 20px 12px}
+.eyebrow{font-size:11px;letter-spacing:1.5px;color:var(--accent);font-weight:800}
+.topbar h1{font-size:27px;margin:3px 0}.avatar{width:42px;height:42px;border-radius:50%;background:#fff;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:21px}
+.hero{padding:20px}.hero .big{font-size:36px;font-weight:800;line-height:1.05;margin:8px 0 15px}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}.kpi{background:#faf9f6;border-radius:14px;padding:12px 8px;text-align:center}.kpi b{display:block;font-size:18px}.kpi span{font-size:11px;color:var(--muted)}
+.section-title{font-size:17px;font-weight:800;margin:22px 4px 8px}.mini-card{background:#fff;border:1px solid var(--line);border-radius:17px;padding:14px;margin:8px 0}.mini-card .icon{width:42px;height:42px;border-radius:13px;background:#eef2eb;display:flex;align-items:center;justify-content:center;font-size:20px}
+.primary-large{height:52px;font-size:16px;border-radius:16px}.complete-all{margin-top:10px;background:#e9eee5;color:#465141}
+.toast{position:fixed;left:50%;bottom:78px;transform:translateX(-50%);background:#262626;color:#fff;padding:11px 16px;border-radius:13px;font-size:13px;opacity:0;pointer-events:none;transition:.25s;z-index:30}.toast.show{opacity:1}
+.nav{font-size:11px;display:flex;flex-direction:column;gap:2px;align-items:center}.nav-icon{font-size:20px;line-height:20px}
+.workout-head{margin:12px 0}.back{background:none;color:#555;padding:4px 0}.set.bigset{height:48px;min-width:70px;border-radius:14px}.set.bigset.done{transform:scale(.98)}
+.today-badge{background:#edf2e8;color:#596552;border-radius:9px;padding:6px 9px;font-size:12px;font-weight:700}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+  <div><div class="eyebrow">HOME WORKOUT</div><h1>今天動一下</h1><div class="sub" id="date"></div></div>
+  <div class="avatar">♡</div>
+</header>
+<main>
+<section id="home">
+<div class="card hero">
+  <div class="sub">今日目標</div>
+  <div class="big" id="heroProgress">0%</div>
+  <div class="row"><span id="count">0 / 12 組</span><span class="today-badge">居家減脂</span></div>
+  <div class="progress" style="margin-top:10px"><div class="bar" id="bar"></div></div>
+  <button class="full primary-large" onclick="startWorkout()">▶ 開始今天的運動</button>
+  <div class="kpis">
+    <div class="kpi"><b id="kpiSets">0</b><span>完成組數</span></div>
+    <div class="kpi"><b id="kpiReps">0</b><span>完成次數</span></div>
+    <div class="kpi"><b id="kpiDays">0</b><span>連續天數</span></div>
+  </div>
+</div>
+<div class="section-title">今天的菜單</div>
+<div id="homePlan"></div>
+<div class="section-title">快速功能</div>
+<div class="mini-card row" onclick="show('plan')"><div class="row" style="justify-content:flex-start"><div class="icon">✎</div><div><b>編輯我的菜單</b><div class="sub">調整動作、次數與組數</div></div></div><span>›</span></div>
+<div class="mini-card row" onclick="show('history')"><div class="row" style="justify-content:flex-start"><div class="icon">◷</div><div><b>查看運動紀錄</b><div class="sub">看看自己這週完成多少</div></div></div><span>›</span></div>
+</section>
+
+<section id="workout" class="hidden">
+<div class="workout-head row"><button class="back" onclick="show('home')">‹ 返回</button><span class="today-badge" id="workoutStatus">進行中</span></div>
+<div id="workoutList"></div>
+<div class="card"><div class="row"><b>休息</b><span class="sub">下一組前休息一下</span></div><div class="timer" id="timer">00:30</div><div class="row"><button onclick="startTimer(30)">30 秒</button><button onclick="startTimer(60)">60 秒</button><button class="secondary" onclick="stopTimer()">停止</button></div></div>
+<button class="full primary-large" onclick="finishWorkout()">✓ 完成今天的運動</button>
+</section>
+
+<section id="plan" class="hidden">
+<div class="row"><button class="small secondary" onclick="show('home')">← 返回</button><b>我的菜單</b></div>
+<div id="planEditor"></div>
+<button class="full" onclick="addExercise()">＋ 新增動作</button>
+<button class="full secondary" onclick="savePlan()">儲存菜單</button>
+</section>
+
+<section id="history" class="hidden">
+<div class="card"><h2>運動紀錄</h2><div id="historyList"></div></div>
+</section>
+</main>
+<nav class="bottom">
+<button class="nav active" id="navhome" onclick="show('home')"><span class="nav-icon">⌂</span>首頁</button>
+<button class="nav" id="navplan" onclick="show('plan')"><span class="nav-icon">☷</span>菜單</button>
+<button class="nav" id="navhistory" onclick="show('history')"><span class="nav-icon">◷</span>紀錄</button>
+</nav><div class="toast" id="toast"></div>
+</div>
+<script>
+const defaultPlan=[
+{name:"深蹲",sets:3,reps:15,type:"reps"},
+{name:"臀橋",sets:3,reps:20,type:"reps"},
+{name:"弓箭步",sets:3,reps:10,type:"reps"},
+{name:"開合跳",sets:3,reps:30,type:"reps"}
+];
+let plan=JSON.parse(localStorage.getItem("homeCutPlan")||"null")||defaultPlan;
+let records=JSON.parse(localStorage.getItem("homeCutRecords")||"[]");
+let completed=JSON.parse(localStorage.getItem("homeCutToday")||"[]");
+let timerId=null,timerSec=30;
+document.getElementById("date").textContent=new Date().toLocaleDateString("zh-TW",{year:"numeric",month:"long",day:"numeric",weekday:"long"});
+function totalSets(){return plan.reduce((a,e)=>a+Number(e.sets),0)}
+function renderHome(){document.getElementById("homePlan").innerHTML=plan.map((e,i)=>`<div class="mini-card row"><div class="row" style="justify-content:flex-start"><div class="icon">${["◉","◆","↗","✦","●","◇"][i%6]}</div><div><div class="name">${esc(e.name)}</div><div class="target">${e.reps}${e.type==="time"?" 秒":" 下"} × ${e.sets} 組</div></div></div><span class="badge">${completed.filter(x=>x.exercise===e.name).length}/${e.sets}</span></div>`).join("");updateProgress()}
+function updateProgress(){let total=totalSets(),done=completed.length,p=Math.min(100,Math.round(done/total*100)||0);document.getElementById("count").textContent=`${done} / ${total} 組`;document.getElementById("pct").textContent=p+"%";document.getElementById("bar").style.width=p+"%"}
+function startWorkout(){renderWorkout();show("workout")}
+function renderWorkout(){document.getElementById("workoutList").innerHTML=plan.map((e,ei)=>{let done=completed.filter(x=>x.exercise===e.name);let buttons=Array.from({length:Number(e.sets)},(_,i)=>`<button class="set bigset ${i<done.length?"done":""}" onclick="completeSet(${ei},${i})">${i<done.length?"✓":"第 "+(i+1)+" 組"}</button>`).join("");return `<div class="card"><div class="row"><div><div class="name">${esc(e.name)}</div><div class="target">${e.reps}${e.type==="time"?" 秒":" 下"} × ${e.sets} 組</div></div><span class="badge">${done.length}/${e.sets}</span></div><div class="sets">${buttons}</div></div>`}).join("");updateProgress()}
+function completeSet(ei,i){let e=plan[ei],done=completed.filter(x=>x.exercise===e.name);if(i<done.length)return; if(i>done.length)return alert("請依序完成每一組。");completed.push({exercise:e.name,set:i+1,value:e.reps});localStorage.setItem("homeCutToday",JSON.stringify(completed));renderWorkout();renderHome();toast(`完成 ${e.name} 第 ${i+1} 組 ✓`)}
+function finishWorkout(){if(completed.length<totalSets()){if(!confirm("還有組數尚未完成，要結束今天的紀錄嗎？"))return}let today=new Date().toISOString().slice(0,10);records.unshift({date:today,sets:completed.length,total:totalSets(),items:completed});records=records.slice(0,100);localStorage.setItem("homeCutRecords",JSON.stringify(records));localStorage.removeItem("homeCutToday");completed=[];alert("今天的運動已記錄！");renderHome();show("history")}
+function renderPlan(){document.getElementById("planEditor").innerHTML=plan.map((e,i)=>`<div class="card"><div class="row"><b>動作 ${i+1}</b><button class="small secondary" onclick="removeExercise(${i})">刪除</button></div><div class="field"><label class="label">動作名稱</label><input value="${esc(e.name)}" onchange="plan[${i}].name=this.value"></div><div class="row"><div style="flex:1"><label class="label">每組</label><input type="number" min="1" value="${e.reps}" onchange="plan[${i}].reps=Math.max(1,+this.value)"></div><div style="flex:1"><label class="label">組數</label><input type="number" min="1" value="${e.sets}" onchange="plan[${i}].sets=Math.max(1,+this.value)"></div></div><div class="field"><label class="label">類型</label><select onchange="plan[${i}].type=this.value"><option value="reps" ${e.type==="reps"?"selected":""}>次數</option><option value="time" ${e.type==="time"?"selected":""}>秒數</option></select></div></div>`).join("")}
+function addExercise(){plan.push({name:"新動作",sets:3,reps:10,type:"reps"});renderPlan()}
+function removeExercise(i){if(plan.length<=1)return alert("至少保留一個動作。");plan.splice(i,1);renderPlan()}
+function savePlan(){localStorage.setItem("homeCutPlan",JSON.stringify(plan));completed=[];localStorage.removeItem("homeCutToday");renderHome();alert("菜單已儲存。");show("home")}
+function renderHistory(){let el=document.getElementById("historyList");if(!records.length){el.innerHTML='<div class="empty">還沒有運動紀錄。完成第一次運動後會出現在這裡。</div>';return}el.innerHTML=records.map(r=>`<div class="exercise"><div class="row"><b>${r.date}</b><span class="badge">${r.sets}/${r.total} 組</span></div><div class="sub">${r.items.map(x=>`${esc(x.exercise)} ${x.value}${x.value===1?"":" 下"} × ${x.set}組`).join("　")}</div></div>`).join("")}
+function show(id){["home","workout","plan","history"].forEach(x=>document.getElementById(x).classList.toggle("hidden",x!==id));["navhome","navplan","navhistory"].forEach(x=>document.getElementById(x).classList.remove("active"));let n={home:"navhome",plan:"navplan",history:"navhistory"}[id];if(n)document.getElementById(n).classList.add("active");if(id==="home")renderHome();if(id==="plan")renderPlan();if(id==="history")renderHistory()}
+function startTimer(sec){stopTimer();timerSec=sec;drawTimer();timerId=setInterval(()=>{timerSec--;drawTimer();if(timerSec<=0){stopTimer();if(navigator.vibrate)navigator.vibrate([200,100,200]);alert("休息結束，下一組！")}},1000)}
+function stopTimer(){if(timerId){clearInterval(timerId);timerId=null}}
+function drawTimer(){document.getElementById("timer").textContent=`00:${String(Math.max(0,timerSec)).padStart(2,"0")}`}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+function weekDays(){let d=new Set(records.map(x=>x.date));let n=0;for(let i=0;i<7;i++){let x=new Date();x.setDate(x.getDate()-i);if(d.has(x.toISOString().slice(0,10)))n++}return n}
+function toast(msg){let t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");clearTimeout(window.toastT);window.toastT=setTimeout(()=>t.classList.remove("show"),1500)}
+function init(){renderHome();document.getElementById("weekCount").textContent=weekDays()+" 天"}
+init();
+</script>
+</body>
+</html>
